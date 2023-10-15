@@ -1,0 +1,5 @@
+num choices/num voters,3,5,7,9,11,13,15,21,31,41,51
+3,0.0556,0.0849,0.1018,0.1129,0.1209,0.1269,0.1317,0.1417,0.1514,0.1572,0.1613
+4,0.0938,0.127,0.1453,0.1573,Nan,Nan,Nan,Nan,Nan,Nan,Nan
+5,0.108,Nan,Nan,Nan,Nan,Nan,Nan,Nan,Nan,Nan,Nan
+6,0.1111,Nan,Nan,Nan,Nan,Nan,Nan,Nan,Nan,Nan,Nan
