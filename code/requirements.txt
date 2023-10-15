@@ -1,0 +1,4 @@
+numpy
+svvamp
+sympy
+tqdm
