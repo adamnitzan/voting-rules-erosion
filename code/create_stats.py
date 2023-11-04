@@ -870,30 +870,38 @@ if __name__ == "__main__":
         report_pairs = [
             ("MR", "BR"),
             ("MR", "PR"),
+            ("MR", "IPR"),
+            ("MR", "APP"),
+            ("BR", "PR"),
+            ("BR", "IPR"),
+            ("BR", "APP"),
+            ("APP", "PR"),
+            ("PR", "IPR"),
         ]
         for report_pair in report_pairs:
-            t = time.time()
-            cur_output_dir = os.path.join(
-                args.output_dir,
-                f'{report_pair[0]}_{report_pair[1]}',
-            )
-            os.makedirs(cur_output_dir, exist_ok=True)
-            create_erosion_stats_reports_for_two_rules(
-                rule1_name=report_pair[0],
-                rule2_name=report_pair[1],
-                input_dir=args.input_dir,
-                output_dir=cur_output_dir,
-                distribution=args.distribution,
-                num_simulations=args.num_simulations,
-                erosion_normalizer=args.erosion_normalizer,
-                analytical_results=args.analytical_results,
-                calculate_only_for_winners=False, # calculate_only_for_winners,
-                debug=args.debug,
-            )
-            gc.collect()  # make sure the memory is cleared
-            print(
-                f"creating stats for {report_pair[0]} and {report_pair[1]} took {time.time() - t} seconds ({(time.time() - t)/60} minutes)"
-            )
+            for calculate_only_for_winners in [False, True]:
+                t = time.time()
+                cur_output_dir = os.path.join(
+                    args.output_dir,
+                    f'{report_pair[0]}_{report_pair[1]}',
+                )
+                os.makedirs(cur_output_dir, exist_ok=True)
+                create_erosion_stats_reports_for_two_rules(
+                    rule1_name=report_pair[0],
+                    rule2_name=report_pair[1],
+                    input_dir=args.input_dir,
+                    output_dir=cur_output_dir,
+                    distribution=args.distribution,
+                    num_simulations=args.num_simulations,
+                    erosion_normalizer=args.erosion_normalizer,
+                    analytical_results=args.analytical_results,
+                    calculate_only_for_winners=calculate_only_for_winners,
+                    debug=args.debug,
+                )
+                gc.collect()  # make sure the memory is cleared
+                print(
+                    f"creating stats for {report_pair[0]} and {report_pair[1]} took {time.time() - t} seconds ({(time.time() - t)/60} minutes)"
+                )
     else:
         t = time.time()
         rule1_name = args.rule1_name
@@ -909,7 +917,7 @@ if __name__ == "__main__":
             num_simulations=args.num_simulations,
             erosion_normalizer=args.erosion_normalizer,
             analytical_results=args.analytical_results,
-            calculate_only_for_winners=False, # args.calculate_only_for_winners,
+            calculate_only_for_winners=args.calculate_only_for_winners,
             debug=args.debug,
         )
         print(
