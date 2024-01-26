@@ -123,11 +123,15 @@ def get_one_rule_erosion_data(
            Dimensions: num_simulations X num_pair
     """
     data_max = data.max(axis=1)
-    erosion = (data_max - data.min(axis=1)).astype("float64")
+    data_min = data.min(axis=1)
     if erosion_normalizer == "not_chosen":
-        erosion /= data_max
+        erosion = (data_max - data_min).astype("float64") / data_max
     elif erosion_normalizer == "all_options":
-        erosion /= data.sum(axis=1)
+        erosion = (data_max - data_min).astype("float64") / data.sum(axis=1)
+    elif erosion_normalizer == "relative":
+        erosion = data_max / np.maximum(0.1, data_min)
+    else:
+        raise ValueError(f"Erosion normalizer: {erosion_normalizer} isn't supported")
     chosen_ind = data.argmax(axis=1)
     inds_to_ignore = (
         np.fliplr(data).argmax(axis=1) != 1 - chosen_ind
@@ -835,7 +839,7 @@ if __name__ == "__main__":
         type=str,
         default="not_chosen",
         help='How to normalize the erosion per option pair. One of: "not chosen" (the preference score for the option not'
-             'chosen) / "all_options" (the sum of the preference scores for both options)',
+             'chosen) / "all_options" (the sum of the preference scores for both options) / "relative" - B(x)/B(y)',
     )
     parser.add_argument(
         "-o", "--output_dir", type=str, required=True,
