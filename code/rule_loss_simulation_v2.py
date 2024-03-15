@@ -68,6 +68,16 @@ def initialize_all_voting_rules() -> Dict[str, VotingRule]:
         "BR": VotingRule(
             name="BR", is_point_rule=True, profile_object_name="borda_score_c_rk"
         ),
+        "AV": VotingRule(
+            name="AV",
+            is_point_rule=True,
+            profile_object_name="approval_voting_scores_rk",
+        ),
+        "IPR": VotingRule(
+            name="IPR",
+            is_point_rule=True,
+            profile_object_name="inverse_plurality_scores_rk",
+        ),
     }
     return all_rules
 
