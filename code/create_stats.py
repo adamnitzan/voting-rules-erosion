@@ -480,6 +480,7 @@ def create_report_entries_for_specific_n_v_and_n_c(
     erosion_stats: dict,
     rule1_mr_erosion: Optional[dict],
     rule2_mr_erosion: Optional[dict],
+    add_stats_range: bool = False
 ) -> Dict[str, dict]:
     def my_round(x, round_factor):
         """
@@ -489,8 +490,8 @@ def create_report_entries_for_specific_n_v_and_n_c(
         """
         if x > 1:
             return round(x, 1)
-        elif x < 0.0002:
-            return round(x, 5)
+        elif x < 0.001:
+            return round(x, 4)
         else:
             return float(f"{x:.3g}")
 
@@ -506,17 +507,19 @@ def create_report_entries_for_specific_n_v_and_n_c(
             erosion_stats["mean_erosion1"] / erosion_stats["mean_erosion2"],
             round_factor,
         )
-        stats["mean_ratios"][param_pair] = (
-            f"{my_round(erosion_stats['mean_ratios'], round_factor)}"
-            f" ({my_round(erosion_stats['min_ratios'], round_factor)}:"
-            f"{my_round(erosion_stats['max_ratios'], round_factor)})"
-        )
+        stats["mean_ratios"][param_pair] = f"{my_round(erosion_stats['mean_ratios'], round_factor)}"
+        if add_stats_range:
+            stats["mean_ratios"][param_pair] += (
+                f" ({my_round(erosion_stats['min_ratios'], round_factor)}:"
+                f"{my_round(erosion_stats['max_ratios'], round_factor)})"
+            )
 
-        stats["mean_differences"][param_pair] = (
-            f"{my_round(erosion_stats['mean_differences'], round_factor)}"
-            f" ({my_round(erosion_stats['min_differences'], round_factor)}:"
-            f"{my_round(erosion_stats['max_differences'], round_factor)})"
-        )
+        stats["mean_differences"][param_pair] = f"{my_round(erosion_stats['mean_differences'], round_factor)}"
+        if add_stats_range:
+            stats["mean_differences"][param_pair] += (
+                f" ({my_round(erosion_stats['min_differences'], round_factor)}:"
+                f"{my_round(erosion_stats['max_differences'], round_factor)})"
+            )
         stats["pct_pairs_better"][param_pair] = my_round(
             erosion_stats["pct_pairs_better"], round_factor
         )
@@ -565,6 +568,7 @@ def create_erosion_stats_reports_for_two_rules(
     erosion_normalizer: str,
     analytical_results: bool,
     output_dir: str,
+    add_stats_range: bool = False,
     calculate_only_for_winners: bool = False,
     debug: bool = False,
 ):
@@ -763,6 +767,7 @@ def create_erosion_stats_reports_for_two_rules(
             erosion_stats=erosion_stats,
             rule1_mr_erosion=rule1_vs_MR_erosion_stats,
             rule2_mr_erosion=rule2_vs_MR_erosion_stats,
+            add_stats_range=add_stats_range,
         )
 
     # Save each entry in the statistics report dictionary as a separate csv file
@@ -824,22 +829,24 @@ if __name__ == "__main__":
         "--rule1_name",
         type=str,
         default="MR",
-        help="Choose from: MR, BR, PR",
+        help="Choose from: MR, BR, PR, AV, IPR",
     )
     parser.add_argument(
         "-b",
         "--rule2_name",
         type=str,
         default="BR",
-        help="Choose from: MR, BR, PR. Needs to be different than rule1",
+        help="Choose from: MR, BR, PR, AV, IPR. Needs to be different than rule1",
     )
     parser.add_argument(
         "-l",
         "--erosion_normalizer",
         type=str,
         default="not_chosen",
-        help='How to normalize the erosion per option pair. One of: "not chosen" (the preference score for the option not'
-             'chosen) / "all_options" (the sum of the preference scores for both options) / "relative" - B(x)/B(y)',
+        help='How to normalize the erosion per option pair. One of: '
+             '[1] "not chosen" (the preference score for the option not chosen) - B(x)-B(y)/B(y), '
+             '[2] "all_options" (the sum of the preference scores for both options) B(x)-B(y)/(B(x) + B(y)), '
+             '[3] "relative" - B(x)/B(y)',
     )
     parser.add_argument(
         "-o", "--output_dir", type=str, required=True,
@@ -854,6 +861,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "-dbg",
         "--debug",
+        action="store_true",
+        default=False,
+        help="load debug data to be able to check correctness",
+    )
+    parser.add_argument(
+        "-range",
+        "--add_stats_range",
         action="store_true",
         default=False,
         help="load debug data to be able to check correctness",
@@ -875,11 +889,11 @@ if __name__ == "__main__":
             ("MR", "BR"),
             ("MR", "PR"),
             ("MR", "IPR"),
-            ("MR", "APP"),
+            ("MR", "AV"),
             ("BR", "PR"),
             ("BR", "IPR"),
-            ("BR", "APP"),
-            ("APP", "PR"),
+            ("BR", "AV"),
+            ("AV", "PR"),
             ("PR", "IPR"),
         ]
         for report_pair in report_pairs:
@@ -899,6 +913,7 @@ if __name__ == "__main__":
                     num_simulations=args.num_simulations,
                     erosion_normalizer=args.erosion_normalizer,
                     analytical_results=args.analytical_results,
+                    add_stats_range=args.add_stats_range,
                     calculate_only_for_winners=calculate_only_for_winners,
                     debug=args.debug,
                 )
@@ -921,6 +936,7 @@ if __name__ == "__main__":
             num_simulations=args.num_simulations,
             erosion_normalizer=args.erosion_normalizer,
             analytical_results=args.analytical_results,
+            add_stats_range=args.add_stats_range,
             calculate_only_for_winners=args.calculate_only_for_winners,
             debug=args.debug,
         )

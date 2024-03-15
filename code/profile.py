@@ -43,9 +43,7 @@ class Profile(my_log.MyLog):
     def __init__(self, preferences_ut=None, preferences_rk=None, preferences_borda_rk=None,
                  log_creation=None, labels_candidates=None, sort_voters=False,
                  approval_voting_probability_dict={
-                     3: [0.5, 0.5, 0],
-                     # 3: [1.0, 0.0, 0],
-                     # 4: [0.8, 0.2, 0],
+                     3: [0.8, 0.2, 0],
                      4: [0.8, 0.15, 0.05],
                  }):
         """Create a profile of voters with preferences over some candidates.
