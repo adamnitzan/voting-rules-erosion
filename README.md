@@ -7,6 +7,9 @@
 - git clone the repo
 - create a virtual environment for the repo
 - pip install -r requirements.txt
+- Either:
+  - Copy the contents of code/profile.py into the similar file installed in the svvamp package (svvamp/preferences/profile.py)
+  - Delete from code/rule_loss_simulation_v2.py the AV and IPR rules (lines 71-80)
 
 ## Creating simulation results
 - All the code exists in the code directory
@@ -23,6 +26,12 @@
   - MR (Majority rule)
   - BR (Borda rule)
   - PR (Plurality rule)
+  - AV (Approval voting)
+  - IPR (inverse plurality rule)
+- The erosion measures, where x is the option that was not chosen and y is the option that was chosen:
+  - B(x)-B(y)/B(x). What proportion of the unchosen option "score" was "ignored". Default
+  - B(x)-B(y)/(B(x)+B(y)). What proportion of the total scores involved in the specific choice pair was "ignored"
+  - B(x)/B(y) -  the amount of "social injustice", even though x is preferred to y by B(x)/B(x) - it was still not chosen.
 - A directory will be created for the results of each pair of voting rules.
 - The script will generate csv files with different statistics comparing the erosion between the two rules
 
@@ -33,7 +42,7 @@
 	- Num voters [3, 5, 7, 9, 11, 13, 15, 21, 31, 41, 51]
 - Larger numbers might cause an out of memory crash. Tune the parameters according to the machine you are using.
 - The output of the script will be output files in the same format as the simulation results, but covering all possible preference profile configurations and the expected number of instances for each configuration (calculated using the multinomial distribution coefficients).
-- To create the statistical reports for the analytical results, run code/create_stats.py with the argument "-ana" (chosing the relevant input/output directories, and the rules you want to create the report for). This will create similar report directories and csv files as for the simulation results but for the anaylitical results.
+- To create the statistical reports for the analytical results, run code/create_stats.py with the argument "-ana" (choosing the relevant input/output directories, and the rules you want to create the report for). This will create similar report directories and CSV files as for the simulation results but for the analytical results.
 
 ### Sample results for 100000 simulations are supplied in the "results" directory
 ### For more details regarding the erosion measures please refer to the article
